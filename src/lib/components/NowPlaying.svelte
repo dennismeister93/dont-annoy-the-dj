@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { nowPlaying } from '../routes/api/now_playing.svelte';
+	import { nowPlaying } from '../../routes/api/now_playing.svelte';
+	import { getQueue, type TrackInformation } from '../../routes/api/queue.svelte';
 	let song: any = $state({});
+	let nextTracks: TrackInformation[] = $state([]);
 	let data: { token: string } = $props();
 
 	async function getNowPlaying() {
-		song = (await nowPlaying(data.token)).body;
+		song = await nowPlaying(data.token);
+		nextTracks = await getQueue(data.token);
 	}
 
 	onMount(async () => {
@@ -26,7 +29,7 @@
 		</div>
 
 		<span class="leading-0"
-			><span class="ml-4 font-semibold"
+			><span>Jetzt läuft: </span><span class="ml-4 font-semibold"
 				><a href={song.songUrl} rel="noopener noreferrer" target="_blank" class="hover:underline"
 					>{song.title}</a
 				></span
@@ -45,22 +48,17 @@
 		>
 		<strong>Not playing</strong> - <span class="text-gray-500">Spotify</span>
 	{/if}
-
-	<br />
-
-	<a href="/dashboard" class="text-primary flex justify-end text-right text-xs hover:underline"
-		><svg
-			xmlns="http://www.w3.org/2000/svg"
-			class="bottom-0 inline-block h-3 w-3 translate-y-[0.45rem]"
-			fill="none"
-			viewBox="0 0 24 24"
-			stroke="currentColor"
-			stroke-width="3"
-		>
-			<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-		</svg>Top tracks</a
-	>
 </div>
+
+{#if nextTracks}
+	{#each nextTracks as track}
+		<div class="flex flex-row items-center gap-1">
+			<img src={track.image.url} alt={track.artist} height="120" width="120" />
+			<div>Interpret: {track.artist}</div>
+			<div>Titel: {track.track}</div>
+		</div>
+	{/each}
+{/if}
 
 <style>
 	.audio span {

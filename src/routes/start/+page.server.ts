@@ -1,4 +1,4 @@
-import { auth } from '$lib/auth.svelte';
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export interface UserProfile {
@@ -26,9 +26,11 @@ interface Image {
 }
 
 export const load: PageServerLoad = async ({ cookies }) => {
-	console.log(cookies.get('auth_token'));
-	const profile = await fetchProfile(auth.token);
-	const token = auth.token;
+	const token = cookies.get('auth_token');
+	if (!token) {
+		error(401, 'Please authorize');
+	}
+	const profile = await fetchProfile(token);
 	return { profile, token };
 };
 

@@ -18,16 +18,14 @@ export async function nowPlaying(token: string) {
 	const artist = song.item.artists.map((_artist: { name: unknown }) => _artist.name).join(', ');
 	const album = song.item.album.name;
 	const albumImageUrl = song.item.album.images[0].url;
-	const songUrl = 'song.item.external_urls.spotify';
+	const songUrl = song.item.external_urls.spotify;
 
 	return {
-		body: { title, artist, album, isPlaying, albumImageUrl, songUrl }
+		title,
+		artist,
+		album,
+		isPlaying,
+		albumImageUrl,
+		songUrl
 	};
 }
-
-// async function fetchProfile(token: string): Promise<UserProfile> {
-// 	const res = await fetch('https://api.spotify.com/v1/me', {
-// 		headers: { Authorization: `Bearer ${token}` }
-// 	});
-// 	return await res.json();
-// }

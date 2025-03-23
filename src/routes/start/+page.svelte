@@ -1,5 +1,5 @@
 <script lang="ts">
-	import NowPlaying from '../../components/NowPlaying.svelte';
+	import NowPlaying from '../../lib/components/NowPlaying.svelte';
 	import type { PageProps } from '../start/$types';
 	let { data }: PageProps = $props();
 </script>

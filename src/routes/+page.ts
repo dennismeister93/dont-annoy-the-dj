@@ -1,11 +1,11 @@
 import { redirect } from '@sveltejs/kit';
-import { auth } from '$lib/auth.svelte';
-import type { PageLoad } from './$types';
+import type { PageLoad } from './login/$types';
 
-export const load: PageLoad = async () => {
-	if (!auth.token) {
-		throw redirect(302, `/login`);
+export const load: PageLoad = async ({ data }) => {
+	const { token } = data;
+	if (!token) {
+		redirect(302, `/login`);
 	} else {
-		throw redirect(302, '/start');
+		redirect(302, '/start');
 	}
 };

@@ -1,7 +1,7 @@
-const clientId = 'dec8529070e64f829372ddafadc95228';
-const redirectUri = 'http://localhost:5173/callback';
+import { clientId } from '$env/static/private';
 
-export const auth: { verifier: string; token: string } = $state({ verifier: '', token: '' });
+export const redirectUri = 'http://localhost:5173/callback';
+export const auth: { verifier: string } = $state({ verifier: '' });
 
 export function generateCodeVerifier(length = 128) {
 	let text = '';
@@ -21,28 +21,7 @@ export async function generateCodeChallenge(codeVerifier: string) {
 		.replace(/=+$/, '');
 }
 
-// export async function redirectToAuth() {
-// 	const verifier = generateCodeVerifier();
-// 	localStorage.setItem('verifier', verifier);
-
-// 	const challenge = await generateCodeChallenge(verifier);
-
-// 	const params = new URLSearchParams({
-// 		client_id: clientId,
-// 		response_type: 'code',
-// 		redirect_uri: redirectUri,
-// 		scope: 'user-read-private user-read-email',
-// 		code_challenge_method: 'S256',
-// 		code_challenge: challenge
-// 	});
-
-// 	window.location.href = `https://accounts.spotify.com/authorize?${params.toString()}`;
-// }
-
 export async function getAccessToken(code: string) {
-	// const verifier = getContext<string>('verifier');
-	if (!auth.verifier) throw new Error('No verifier found in storage');
-
 	const params = new URLSearchParams({
 		client_id: clientId,
 		grant_type: 'authorization_code',
