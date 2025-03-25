@@ -37,5 +37,27 @@ export async function getAccessToken(code: string) {
 	});
 
 	const data = await response.json();
-	return data.access_token;
+	return { accessToken: data.access_token, refreshToken: data.refresh_token };
+}
+
+export async function refreshAccessToken(refreshToken: string) {
+	const params = new URLSearchParams({
+		client_id: clientId,
+		grant_type: 'refresh_token',
+		refresh_token: refreshToken
+	});
+
+	const response = await fetch('https://accounts.spotify.com/api/token', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+		body: params
+	});
+
+	const data = await response.json();
+
+	if (!response.ok) {
+		throw new Error(`Failed to refresh token: ${data.error}`);
+	}
+
+	return { accessToken: data.access_token, refreshToken: data.refresh_token || refreshToken };
 }

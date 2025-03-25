@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const queue_endpoint = `https://api.spotify.com/v1/me/player/queue`;
 
-interface Image {
+export interface Image {
 	height: number;
 	url: string;
 	width: number;

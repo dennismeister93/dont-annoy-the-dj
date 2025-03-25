@@ -10,11 +10,16 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		console.log('Error');
 		redirect(302, '/');
 	}
-	let token: string;
 	try {
 		console.log('YES, received code');
-		token = await getAccessToken(code);
-		cookies.set('auth_token', token, {
+		const { accessToken, refreshToken } = await getAccessToken(code);
+		cookies.set('auth_token', accessToken, {
+			path: '/',
+			httpOnly: true,
+			sameSite: 'lax',
+			maxAge: 7200
+		});
+		cookies.set('refresh_token', refreshToken, {
 			path: '/',
 			httpOnly: true,
 			sameSite: 'lax',
