@@ -61,10 +61,10 @@
 </script>
 
 <section class="p-4">
-	<div class="h-20 content-center">
+	<div class="h-[5.9rem] content-center">
 		<aside class="h-full place-items-center">
 			<input
-				class="input bg-surface-400 placeholder:text-surface-300 h-full w-3/4 text-xl"
+				class="input bg-surface-400 placeholder:text-surface-300 h-full w-3/4 text-center text-xl transition-all duration-200 focus:scale-110"
 				id="search"
 				{placeholder}
 				bind:value={searchInput}
@@ -74,10 +74,14 @@
 		</aside>
 	</div>
 
-	<hr class="hr m-5 border-t-2" />
-
+	<hr class="hr my-5 border-t-2" />
+	{#if searchResponse.length > 0}
+		<div class="text-primary-500 flex w-full items-center justify-center">
+			<span>😍 Gefunden 😍</span>
+		</div>
+	{/if}
 	{#each searchResponse as track}
-		<Track {track} {handleAdd} />
+		<Track {track} {handleAdd} variant={'search'} />
 	{/each}
 </section>
 
