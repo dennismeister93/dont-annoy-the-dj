@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 		error(401, 'Please authorize');
 	}
 	const profile = await fetchProfile(token);
-	return { profile, token };
+	return { profile };
 };
 
 async function fetchProfile(token: string): Promise<UserProfile> {

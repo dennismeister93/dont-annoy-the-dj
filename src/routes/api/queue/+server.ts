@@ -9,6 +9,7 @@ export interface Image {
 }
 
 export interface TrackInformation {
+	id: string;
 	image: Image;
 	track: string;
 	artist: string;
@@ -48,7 +49,12 @@ export const GET: RequestHandler = async ({ cookies }) => {
 	};
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const nextTracksRes: TrackInformation[] = queue.map((item: any) => {
-		return { image: item.album.images[0], track: item.name, artist: item.artists[0].name };
+		return {
+			id: item.id,
+			image: item.album.images[0],
+			track: item.name,
+			artist: item.artists[0].name
+		};
 	});
 	return Response.json({ currentlyPlayingRes, nextTracksRes });
 };

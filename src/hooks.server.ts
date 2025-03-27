@@ -2,9 +2,8 @@ import { refreshAccessToken } from '$lib/auth.svelte';
 import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	console.log('Handle');
 	const cookies = event.cookies;
-	let accessTokenCookie = cookies.get('access_token');
+	const accessTokenCookie = cookies.get('access_token');
 	const refreshTokenCookie = cookies.get('refresh_token');
 	if (!accessTokenCookie && refreshTokenCookie) {
 		try {

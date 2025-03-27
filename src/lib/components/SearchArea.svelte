@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { SearchTrackInformation } from '../../routes/api/search/[searchValue]/+server';
 	import Keyboard from './Keyboard.svelte';
+	import Track from './Track/Track.svelte';
+	import type { TrackInformation } from '../../routes/api/queue/+server';
 
 	interface Props {
 		placeholder?: string;
@@ -9,7 +10,7 @@
 
 	let { placeholder = 'Such dein Lied!' }: Props = $props();
 	let searchInput: string = $state('');
-	let searchResponse: SearchTrackInformation[] = $state([]);
+	let searchResponse: TrackInformation[] = $state([]);
 	let showKeyboard: boolean = $state(false);
 
 	let timeOut: number;
@@ -59,32 +60,27 @@
 	});
 </script>
 
-<div class="col-span-2 row-span-2 gap-2">
-	<aside>
-		<form method="POST">
+<section class="p-4">
+	<div class="h-20 content-center">
+		<aside class="h-full place-items-center">
 			<input
-				class="input bg-surface-400 placeholder:text-surface-300 w-36 sm:w-64"
+				class="input bg-surface-400 placeholder:text-surface-300 h-full w-3/4 text-xl"
 				id="search"
 				{placeholder}
 				bind:value={searchInput}
 				oninput={() => handleInput(searchInput)}
 				onfocus={() => (showKeyboard = true)}
 			/>
-			{#if showKeyboard}
-				<Keyboard {handleInput} />
-			{/if}
-		</form>
-	</aside>
-	<aside class="mt-5 gap-5">
-		{#each searchResponse as track}
-			<div class="flex flex-row items-center gap-2">
-				<img src={track.image.url} alt={track.track} height="120" width="120" />
-				<div>Titel: {track.track}</div>
-				<div>Artists: {track.artists}</div>
-				<button type="button" class="btn-icon preset-filled" onclick={() => handleAdd(track.id)}
-					>&rarr;</button
-				>
-			</div>
-		{/each}
-	</aside>
-</div>
+		</aside>
+	</div>
+
+	<hr class="hr m-5 border-t-2" />
+
+	{#each searchResponse as track}
+		<Track {track} {handleAdd} />
+	{/each}
+</section>
+
+{#if showKeyboard}
+	<Keyboard {handleInput} />
+{/if}

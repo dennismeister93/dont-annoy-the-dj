@@ -1,14 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
-import type { Image } from '../../queue/+server';
+import type { TrackInformation } from '../../queue/+server';
 
 const search_endpoint = 'https://api.spotify.com/v1/search?';
-
-export interface SearchTrackInformation {
-	id: string;
-	track: string;
-	artists: string;
-	image: Image;
-}
 
 export const GET: RequestHandler = async ({ cookies, params: { searchValue } }) => {
 	if (!searchValue) {
@@ -36,12 +29,11 @@ export const GET: RequestHandler = async ({ cookies, params: { searchValue } }) 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const tracks: any[] = responseObj.tracks.items;
 
-	const formattedTracks = tracks.map((item) => {
-		console.log(item.artists.map((_artist: { name: unknown }) => _artist.name).join(', '));
+	const formattedTracks: TrackInformation[] = tracks.map((item) => {
 		return {
 			id: item.id,
 			track: item.name,
-			artists: item.artists.map((_artist: { name: unknown }) => _artist.name).join(', '),
+			artist: item.artists.map((_artist: { name: unknown }) => _artist.name).join(', '),
 			image: item.album.images[0]
 		};
 	});
