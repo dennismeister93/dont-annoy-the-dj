@@ -9,12 +9,12 @@
 
 {#if data.profile}
 	<!-- <section class="bg-surface-500 grid grid-rows-[auto_1fr_auto] space-y-4 p-4"> -->
-	<section class="bg-surface-500 grid grid-flow-col grid-rows-3 gap-4">
+	<section class="bg-surface-500 grid min-h-screen grid-flow-col grid-rows-3 gap-4">
 		<!-- <UserData profile={data.profile} /> -->
 		<div class="row-span-3">
-			<NowPlaying token={data.token}></NowPlaying>
+			<NowPlaying />
 		</div>
 		<!-- <div class="col-span-2">02</div> -->
-		<SearchArea token={data.token} />
+		<SearchArea />
 	</section>
 {/if}

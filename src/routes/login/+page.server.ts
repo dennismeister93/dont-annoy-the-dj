@@ -7,14 +7,17 @@ import {
 	refreshAccessToken
 } from '$lib/auth.svelte';
 import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad } from '../$types';
+import type { PageServerLoad } from './$types';
 
 const SCOPES =
 	'user-read-private user-read-email user-read-currently-playing user-read-playback-state user-modify-playback-state';
 
 export const load: PageServerLoad = async ({ cookies }) => {
-	let accessToken = cookies.get('auth_token');
+	console.log('Checking for access & refresh token in cookies');
+	let accessToken = cookies.get('access_token');
 	const refreshToken = cookies.get('refresh_token');
+	console.log('Access Token: ', accessToken);
+	console.log('Refresh Token: ', refreshToken);
 
 	if (!accessToken && refreshToken) {
 		try {
@@ -22,7 +25,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 			const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
 				await refreshAccessToken(refreshToken);
 
-			cookies.set('auth_token', newAccessToken, {
+			cookies.set('access_token', newAccessToken, {
 				path: '/',
 				httpOnly: true,
 				sameSite: 'lax',

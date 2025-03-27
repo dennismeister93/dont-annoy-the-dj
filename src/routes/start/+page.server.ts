@@ -26,7 +26,7 @@ interface Image {
 }
 
 export const load: PageServerLoad = async ({ cookies }) => {
-	const token = cookies.get('auth_token');
+	const token = cookies.get('access_token');
 	if (!token) {
 		error(401, 'Please authorize');
 	}

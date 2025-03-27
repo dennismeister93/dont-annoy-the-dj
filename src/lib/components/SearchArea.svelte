@@ -1,19 +1,22 @@
 <script lang="ts">
-	import { addToQueue } from '../../routes/api/addToQueue.svelte';
+	import { onMount } from 'svelte';
 	import type { SearchTrackInformation } from '../../routes/api/search/[searchValue]/+server';
+	import Keyboard from './Keyboard.svelte';
 
 	interface Props {
-		token: string;
 		placeholder?: string;
 	}
 
-	let { token, placeholder = 'Such dein Lied!' }: Props = $props();
+	let { placeholder = 'Such dein Lied!' }: Props = $props();
 	let searchInput: string = $state('');
 	let searchResponse: SearchTrackInformation[] = $state([]);
+	let showKeyboard: boolean = $state(false);
 
 	let timeOut: number;
 
-	function handleInput() {
+	function handleInput(input: string) {
+		document.querySelector<HTMLInputElement>('.input')!.value = input;
+		searchInput = input;
 		clearTimeout(timeOut);
 		timeOut = setTimeout(async () => {
 			try {
@@ -26,7 +29,6 @@
 					throw new Error(`HTTP error! Status: ${response.status}`);
 				}
 				const data = await response.json();
-				console.log('Fetched data:', data);
 				searchResponse = data;
 			} catch (error) {
 				console.error('Error fetching search results:', error);
@@ -35,8 +37,26 @@
 	}
 
 	async function handleAdd(trackId: string) {
-		await addToQueue(token, trackId);
+		await fetch(`/api/queue/add/${trackId}`, { method: 'POST' });
+		searchResponse = searchResponse.filter((item) => item.id !== trackId);
 	}
+
+	onMount(() => {
+		document.addEventListener('click', (event) => {
+			if (
+				/**
+				 * Hide the keyboard when you're not clicking it or when clicking an input
+				 * If you have installed a "click outside" library, please use that instead.
+				 */
+				!(event.target as HTMLElement).className.includes('input') &&
+				!(event.target as HTMLElement).className.includes('hg-button') &&
+				!(event.target as HTMLElement).className.includes('hg-row') &&
+				!(event.target as HTMLElement).className.includes('simple-keyboard')
+			) {
+				showKeyboard = false;
+			}
+		});
+	});
 </script>
 
 <div class="col-span-2 row-span-2 gap-2">
@@ -47,15 +67,23 @@
 				id="search"
 				{placeholder}
 				bind:value={searchInput}
-				oninput={handleInput}
+				oninput={() => handleInput(searchInput)}
+				onfocus={() => (showKeyboard = true)}
 			/>
+			{#if showKeyboard}
+				<Keyboard {handleInput} />
+			{/if}
 		</form>
 	</aside>
 	<aside class="mt-5 gap-5">
 		{#each searchResponse as track}
-			<div role="none" class="flex flex-row items-center gap-2" onclick={() => handleAdd(track.id)}>
+			<div class="flex flex-row items-center gap-2">
 				<img src={track.image.url} alt={track.track} height="120" width="120" />
 				<div>Titel: {track.track}</div>
+				<div>Artists: {track.artists}</div>
+				<button type="button" class="btn-icon preset-filled" onclick={() => handleAdd(track.id)}
+					>&rarr;</button
+				>
 			</div>
 		{/each}
 	</aside>

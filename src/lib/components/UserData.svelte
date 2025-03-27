@@ -1,5 +1,4 @@
 <script lang="ts">
-	import NowPlaying from '../../lib/components/NowPlaying.svelte';
 	import type { UserProfile } from '../../routes/start/+page.server';
 	interface Props {
 		profile: UserProfile;

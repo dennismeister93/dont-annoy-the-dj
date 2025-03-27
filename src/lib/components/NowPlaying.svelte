@@ -1,14 +1,20 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { nowPlaying } from '../../routes/api/now_playing.svelte';
-	import { getQueue, type TrackInformation } from '../../routes/api/queue.svelte';
+	import { browser } from '$app/environment';
+	import type { TrackInformation } from '../../routes/api/queue/+server';
 	let song: any = $state({});
 	let nextTracks: TrackInformation[] = $state([]);
-	let data: { token: string } = $props();
 
 	async function getNowPlaying() {
-		song = await nowPlaying(data.token);
-		nextTracks = await getQueue(data.token);
+		if (browser) {
+			const response = await fetch(`/api/queue`);
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+			const { currentlyPlayingRes, nextTracksRes } = await response.json();
+			song = currentlyPlayingRes;
+			nextTracks = nextTracksRes;
+		}
 	}
 
 	onMount(async () => {
@@ -21,7 +27,7 @@
 </script>
 
 <div class="w-fit rounded-lg border-2 bg-gray-100 p-4 py-2 pl-5 text-sm text-gray-500">
-	{#if song.isPlaying}
+	{#if song.title}
 		<div class="audio bg-primary-500 relative top-0 m-0 mr-1 inline p-0">
 			<span></span>
 			<span></span>

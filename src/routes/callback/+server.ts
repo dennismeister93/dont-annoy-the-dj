@@ -13,17 +13,17 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	try {
 		console.log('YES, received code');
 		const { accessToken, refreshToken } = await getAccessToken(code);
-		cookies.set('auth_token', accessToken, {
+		cookies.set('access_token', accessToken, {
 			path: '/',
 			httpOnly: true,
 			sameSite: 'lax',
-			maxAge: 7200
+			maxAge: 3600
 		});
 		cookies.set('refresh_token', refreshToken, {
 			path: '/',
 			httpOnly: true,
 			sameSite: 'lax',
-			maxAge: 7200
+			maxAge: 30 * 24 * 60 * 60
 		});
 	} catch (error) {
 		console.error('Error getting access token:', error);
