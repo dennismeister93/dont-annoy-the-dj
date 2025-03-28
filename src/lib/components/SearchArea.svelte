@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Keyboard from './Keyboard.svelte';
-	import Track from './Track/Track.svelte';
 	import type { TrackInformation } from '../../routes/api/queue/+server';
+	import TrackContainer from './Track/TrackContainer.svelte';
 
 	interface Props {
 		placeholder?: string;
@@ -55,22 +55,30 @@
 				!(event.target as HTMLElement).className.includes('simple-keyboard')
 			) {
 				showKeyboard = false;
+				searchInput = '';
 			}
 		});
 	});
 </script>
 
-<section class="p-4">
-	<div class="h-[5.9rem] content-center">
-		<aside class="h-full place-items-center">
+<section class="flex h-screen flex-col p-4">
+	<div class="h-[5.9rem] place-items-center">
+		<aside class="flex h-full w-3/4 flex-row place-items-center">
 			<input
-				class="input bg-surface-400 placeholder:text-surface-300 h-full w-3/4 text-center text-xl transition-all duration-200 focus:scale-110"
+				class="input bg-surface-400 placeholder:text-surface-300 relative h-full text-center text-xl transition-all duration-200 focus:scale-110"
 				id="search"
 				{placeholder}
 				bind:value={searchInput}
 				oninput={() => handleInput(searchInput)}
 				onfocus={() => (showKeyboard = true)}
 			/>
+			<button
+				type="button"
+				class=" btn-icon preset-filled bg-secondary-600 hover:bg-secondary-700 dark:bg-secondary-400 dark:hover:bg-secondary-500 absolute relative flex items-center justify-center overflow-hidden transition-transform duration-200"
+				onclick={() => (searchInput = '')}
+			>
+				<span class="text-lg">X</span>
+			</button>
 		</aside>
 	</div>
 
@@ -80,9 +88,7 @@
 			<span>😍 Gefunden 😍</span>
 		</div>
 	{/if}
-	{#each searchResponse as track}
-		<Track {track} {handleAdd} variant={'search'} />
-	{/each}
+	<TrackContainer tracks={searchResponse} variant="search" {handleAdd} />
 </section>
 
 {#if showKeyboard}

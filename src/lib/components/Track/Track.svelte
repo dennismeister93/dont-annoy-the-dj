@@ -2,7 +2,7 @@
 	import { onDestroy } from 'svelte';
 	import type { TrackInformation } from '../../../routes/api/queue/+server';
 
-	type Variant = 'playing' | 'queue' | 'search';
+	export type Variant = 'playing' | 'queue' | 'search';
 
 	interface Props {
 		track: TrackInformation;

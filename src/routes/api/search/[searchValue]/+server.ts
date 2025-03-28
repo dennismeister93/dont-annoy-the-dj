@@ -10,6 +10,7 @@ export const GET: RequestHandler = async ({ cookies, params: { searchValue } }) 
 	const params = new URLSearchParams({
 		q: searchValue,
 		type: 'artist,track',
+		limit: '50',
 		market: 'DE'
 	});
 
