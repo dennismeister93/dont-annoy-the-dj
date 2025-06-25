@@ -1,6 +1,9 @@
-import { clientId } from '$env/static/private';
+import { CLIENT_ID, REDIRECT_URI } from '$env/static/private';
 
-export const redirectUri = 'http://localhost:5173/callback';
+export const spotifyUrl = 'https://accounts.spotify.com';
+export const spotifyTokenEndpoint = '/api/token';
+export const spotifyAuthEndpoint = '/authorize';
+
 export const auth: { verifier: string } = $state({ verifier: '' });
 
 export function generateCodeVerifier(length = 128) {
@@ -23,14 +26,14 @@ export async function generateCodeChallenge(codeVerifier: string) {
 
 export async function getAccessToken(code: string) {
 	const params = new URLSearchParams({
-		client_id: clientId,
+		client_id: CLIENT_ID,
 		grant_type: 'authorization_code',
 		code,
-		redirect_uri: redirectUri,
+		redirect_uri: REDIRECT_URI,
 		code_verifier: auth.verifier
 	});
 
-	const response = await fetch('https://accounts.spotify.com/api/token', {
+	const response = await fetch(`${spotifyUrl}${spotifyTokenEndpoint}`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 		body: params
@@ -42,12 +45,12 @@ export async function getAccessToken(code: string) {
 
 export async function refreshAccessToken(refreshToken: string) {
 	const params = new URLSearchParams({
-		client_id: clientId,
+		client_id: CLIENT_ID,
 		grant_type: 'refresh_token',
 		refresh_token: refreshToken
 	});
 
-	const response = await fetch('https://accounts.spotify.com/api/token', {
+	const response = await fetch(`${spotifyUrl}${spotifyTokenEndpoint}`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 		body: params

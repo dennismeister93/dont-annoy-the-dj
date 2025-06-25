@@ -1,13 +1,11 @@
 <script lang="ts">
+	import type { TrackInformation, TrackDisplayVariant } from '$lib/types';
 	import { onDestroy } from 'svelte';
-	import type { TrackInformation } from '../../../routes/api/queue/+server';
-
-	export type Variant = 'playing' | 'queue' | 'search';
 
 	interface Props {
 		track: TrackInformation;
 		handleAdd?: (trackId: string) => void;
-		variant?: Variant;
+		variant?: TrackDisplayVariant;
 	}
 
 	const { track, handleAdd, variant = 'search' }: Props = $props();
@@ -111,7 +109,7 @@
 				class="btn preset-filled bg-secondary-600 hover:bg-secondary-700 dark:bg-secondary-400 dark:hover:bg-secondary-500 relative flex items-center justify-center overflow-hidden transition-transform duration-200"
 				onclick={() => handleAdd(track.id)}
 			>
-				<span class="text-lg">Einreihen!</span>
+				<span class="text-lg">Queue!</span>
 			</button>
 		{/if}
 	</div>

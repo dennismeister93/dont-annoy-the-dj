@@ -1,23 +1,23 @@
-import { clientId } from '$env/static/private';
+import { CLIENT_ID, REDIRECT_URI } from '$env/static/private';
 import {
 	auth,
 	generateCodeChallenge,
 	generateCodeVerifier,
-	redirectUri,
-	refreshAccessToken
-} from '$lib/auth.svelte';
+	refreshAccessToken,
+	spotifyAuthEndpoint,
+	spotifyUrl
+} from '$lib/utils/auth.svelte';
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { ACCESS_TOKEN_OPTIONS, REFRESH_TOKEN_OPTIONS } from '$lib/utils/cookies.svelte';
 
 const SCOPES =
 	'user-read-private user-read-email user-read-currently-playing user-read-playback-state user-modify-playback-state';
 
 export const load: PageServerLoad = async ({ cookies }) => {
-	console.log('Checking for access & refresh token in cookies');
+	// Checking for access & refresh token in cookies
 	let accessToken = cookies.get('access_token');
 	const refreshToken = cookies.get('refresh_token');
-	console.log('Access Token: ', accessToken);
-	console.log('Refresh Token: ', refreshToken);
 
 	if (!accessToken && refreshToken) {
 		try {
@@ -25,39 +25,28 @@ export const load: PageServerLoad = async ({ cookies }) => {
 			const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
 				await refreshAccessToken(refreshToken);
 
-			cookies.set('access_token', newAccessToken, {
-				path: '/',
-				httpOnly: true,
-				sameSite: 'lax',
-				maxAge: 3600
-			});
-			cookies.set('refresh_token', newRefreshToken, {
-				path: '/',
-				httpOnly: true,
-				sameSite: 'lax',
-				maxAge: 30 * 24 * 60 * 60
-			});
-
+			cookies.set('access_token', newAccessToken, ACCESS_TOKEN_OPTIONS);
+			cookies.set('refresh_token', newRefreshToken, REFRESH_TOKEN_OPTIONS);
 			accessToken = newAccessToken;
 		} catch (error) {
 			console.error('Error refreshing token:', error);
-			redirect(302, '/'); // Redirect to login if refreshing fails
+			redirect(302, '/');
 		}
 	}
 
 	if (!accessToken) {
-		console.log('No auth token, requesting new');
+		// No access token found, requesting new
 		auth.verifier = generateCodeVerifier(128);
 		const challenge = await generateCodeChallenge(auth.verifier);
 		const params = new URLSearchParams({
-			client_id: clientId,
+			client_id: CLIENT_ID,
 			response_type: 'code',
-			redirect_uri: redirectUri,
+			redirect_uri: REDIRECT_URI,
 			scope: SCOPES,
 			code_challenge_method: 'S256',
 			code_challenge: challenge
 		});
-		redirect(302, `https://accounts.spotify.com/authorize?${params.toString()}`);
+		redirect(302, `${spotifyUrl}${spotifyAuthEndpoint}?${params.toString()}`);
 	}
 	return { token: accessToken };
 };

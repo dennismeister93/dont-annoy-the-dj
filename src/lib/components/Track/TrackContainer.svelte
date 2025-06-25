@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import Track, { type Variant } from './Track.svelte';
-	import type { TrackInformation } from '../../../routes/api/queue/+server';
+	import type { TrackInformation, TrackDisplayVariant } from '$lib/types';
+	import Track from './Track.svelte';
 
 	interface Props {
 		tracks: TrackInformation[];
-		variant: Variant;
+		variant: TrackDisplayVariant;
 		handleAdd?: (trackId: string) => void;
 	}
 	const { tracks, variant, handleAdd }: Props = $props();
@@ -23,7 +23,7 @@
 	const applyMomentum = () => {
 		if (Math.abs(velocityX) > 0.1 || Math.abs(velocityY) > 0.1) {
 			nextTracksContainer.scrollBy(velocityX, velocityY);
-			velocityX *= 0.95; // Reduce speed gradually
+			velocityX *= 0.95;
 			velocityY *= 0.95;
 			momentumID = requestAnimationFrame(applyMomentum);
 		} else {
@@ -42,7 +42,6 @@
 			scrollTop = nextTracksContainer.scrollTop;
 			nextTracksContainer.style.cursor = 'grabbing';
 
-			// Cancel momentum on new drag
 			cancelAnimationFrame(momentumID);
 			velocityX = 0;
 			velocityY = 0;
@@ -51,15 +50,13 @@
 		nextTracksContainer.addEventListener('mousemove', (e) => {
 			if (!isDragging) return;
 
-			e.preventDefault(); // Prevents text selection
+			e.preventDefault();
 			let deltaX = e.pageX - startX;
 			let deltaY = e.pageY - startY;
 
-			// Update scroll position of div
 			nextTracksContainer.scrollLeft = scrollLeft - deltaX;
 			nextTracksContainer.scrollTop = scrollTop - deltaY;
 
-			// Store velocity for momentum
 			velocityX = -deltaX * 0.3;
 			velocityY = -deltaY * 0.3;
 		});
@@ -68,7 +65,6 @@
 			isDragging = false;
 			nextTracksContainer.style.cursor = 'default';
 
-			// Apply smooth momentum scrolling
 			requestAnimationFrame(applyMomentum);
 		});
 	});

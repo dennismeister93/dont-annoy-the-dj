@@ -1,9 +1,10 @@
+import { SPOTIFY_API_URL } from '$lib/constants';
 import type { RequestHandler } from '@sveltejs/kit';
 
-const add_to_queue_endpoint = 'https://api.spotify.com/v1/me/player/queue?uri=spotify%3Atrack%3A';
+const ADD_TO_QUEUE_ENDPOINT = `${SPOTIFY_API_URL}/v1/me/player/queue?uri=spotify%3Atrack%3A`;
 
 async function addToQueue(token: string, id: string): Promise<void> {
-	await fetch(`${add_to_queue_endpoint}${id}`, {
+	await fetch(`${ADD_TO_QUEUE_ENDPOINT}${id}`, {
 		method: 'POST',
 		headers: {
 			Authorization: `Bearer ${token}`

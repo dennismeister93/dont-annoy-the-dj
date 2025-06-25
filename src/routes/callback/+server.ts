@@ -1,34 +1,21 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { getAccessToken } from '$lib/auth.svelte';
+import { getAccessToken } from '$lib/utils/auth.svelte';
+import { ACCESS_TOKEN_OPTIONS, REFRESH_TOKEN_OPTIONS } from '$lib/utils/cookies.svelte';
 
 export const GET: RequestHandler = async ({ url, cookies }) => {
-	console.log('Get');
 	const code = url.searchParams.get('code');
 
 	if (!code) {
-		console.log('Error');
 		redirect(302, '/');
 	}
 	try {
-		console.log('YES, received code');
 		const { accessToken, refreshToken } = await getAccessToken(code);
-		cookies.set('access_token', accessToken, {
-			path: '/',
-			httpOnly: true,
-			sameSite: 'lax',
-			maxAge: 3600
-		});
-		cookies.set('refresh_token', refreshToken, {
-			path: '/',
-			httpOnly: true,
-			sameSite: 'lax',
-			maxAge: 30 * 24 * 60 * 60
-		});
+		cookies.set('access_token', accessToken, ACCESS_TOKEN_OPTIONS);
+		cookies.set('refresh_token', refreshToken, REFRESH_TOKEN_OPTIONS);
 	} catch (error) {
 		console.error('Error getting access token:', error);
 		redirect(302, '/');
 	}
-	console.log('Redirecting to start');
-	redirect(302, '/start');
+	redirect(302, '/dj');
 };

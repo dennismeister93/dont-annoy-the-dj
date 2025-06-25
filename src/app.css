@@ -3,8 +3,14 @@
 
 @import '@skeletonlabs/skeleton';
 @import '@skeletonlabs/skeleton/optional/presets';
-@import '@skeletonlabs/skeleton/themes/cerberus';
-@import '../ailo';
+@import '@skeletonlabs/skeleton/themes/reign';
+@import '@skeletonlabs/skeleton/themes/rose';
+@import '@skeletonlabs/skeleton/themes/vintage';
+@import '@skeletonlabs/skeleton/themes/catppuccin';
+@import '@skeletonlabs/skeleton/themes/concord';
+@import '@skeletonlabs/skeleton/themes/crimson';
+@import '@skeletonlabs/skeleton/themes/fennec';
+@import '../gryffindor';
 
 @source '../node_modules/@skeletonlabs/skeleton-svelte/dist';
 
